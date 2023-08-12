@@ -1,14 +1,10 @@
 package com.vishal.letsgo.repository;
 
-import org.springframework.stereotype.Component;
 
-@Component
-public class UserRepository {
-	
-	private String successMessage = "UserRepository.REGISTRATION_SUCCESS";
-	
-	public String registerUser() {
-		return successMessage;
-	}
+import com.vishal.letsgo.entity.UserEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<UserEntity,String> {
+
 
 }

@@ -4,17 +4,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-
+import com.vishal.letsgo.entity.UserEntity;
+import com.vishal.letsgo.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.vishal.letsgo.exception.InvalidCityException;
-import com.vishal.letsgo.exception.InvalidEmailException;
-import com.vishal.letsgo.exception.InvalidNameException;
-import com.vishal.letsgo.exception.InvalidPasswordException;
-import com.vishal.letsgo.exception.InvalidPhoneException;
-import com.vishal.letsgo.exception.InvalidUserIdException;
-import com.vishal.letsgo.exception.LetsGoException;
 import com.vishal.letsgo.model.User;
 import com.vishal.letsgo.repository.UserRepository;
 
@@ -27,12 +21,20 @@ public class RegistrationService {
 	String regex1 = "^[a-zA-Z0-9]{4,15}+$";
 	
 	public String registerUser(User user) throws LetsGoException {
-		String registrationMessage = null;
-		System.out.println(" Inside register User");
 		validateUser(user);
-		System.out.println("User validation is done");
-		registrationMessage = userRepository.registerUser();
-		return registrationMessage;
+		boolean b = userRepository.existsById(user.getUserId());
+		if(b)
+			throw new UserIdAlreadyPresentException("RegistrationService.USERID_PRESENT");
+		UserEntity userEntity = new UserEntity();
+		userEntity.setCity(user.getCity());
+		userEntity.setEmail(user.getEmail());
+		userEntity.setName(user.getName());
+		userEntity.setPassword(user.getPassword());
+		userEntity.setPhone(user.getPhone());
+		userEntity.setUserId(user.getUserId());
+
+		userRepository.saveAndFlush(userEntity);
+		return "UserRepository.REGISTRATION_SUCCESS";
 	}
 	
 	public void validateUser(User user) throws LetsGoException  {
